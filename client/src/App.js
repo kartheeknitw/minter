@@ -3,8 +3,20 @@ import MyMinterContract from "./contracts/MyMinter.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
+import Stepper from "./components/Stepper";
+import BasicForm from "./components/Forms/BasicForm";
+import Tokenomics from './components/Forms/Tokenomics'
+import { Col, Row } from "antd";
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      basic: {},
+      token: {},
+      step: 0
+    }
+  }
 
   componentDidMount = async () => {
     try {
@@ -35,23 +47,47 @@ class App extends Component {
     }
   };
 
+  nextStep = () => {
+    this.setState({
+      ...this.state,
+      step: this.state.step + 1
+    })
+  }
+
+  setBasicFormData = (data) => {
+    this.setState({
+      ...this.state,
+      basic: data
+    })
+  }
+
+  setTokenFormData = (data) => {
+    this.setState({
+      ...this.state,
+      token: data
+    })
+  }
   render() {
+    console.log('state', this.state)
     return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 42</strong> of App.js.
-        </p>
-        <div>The stored value is: </div>
-      </div>
+      <Row style={{paddingTop : 24}} gutter={[0, 48]}>
+        <Col span={12} offset={6}>
+          <Stepper step={this.state.step} />
+        </Col>
+        <Col span={12} offset={6}>
+          {
+            this.state.step === 0 && <BasicForm nextStep={this.nextStep} setBasicFormData={this.setBasicFormData} />
+          }
+          {
+            this.state.step === 1 && <Tokenomics nextStep={this.nextStep} setTokenFormData={this.setTokenFormData} />
+
+          }
+        </Col>
+      </Row>
     );
   }
 }
 
 export default App;
+
+
