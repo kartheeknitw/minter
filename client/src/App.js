@@ -10,7 +10,7 @@ import { Button, Col, Row } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null };
+  state = { web3: null, accounts: null, contract: null, displayState: null };
   constructor(props) {
     super(props)
     this.state = {
@@ -48,9 +48,10 @@ class App extends Component {
         const contract = new web3.eth.Contract(
           MyMinterContract.abi,
           deployedNetwork && deployedNetwork.address
-        );
-        this.setState({ accounts, contract });
-        console.log("Loaded web3 and account: " + account);
+        );        
+        const displayAccount = account.slice(0,4) + "..." + account.slice(-4);
+        this.setState({ accounts, contract, displayAccount });
+        console.log("Loaded web3 and account: " + account + " displayAccount: " + displayAccount);
       } catch (error) {
         alert(
           `Failed to load web3, accounts, or contract. Check console for details.`
@@ -96,7 +97,7 @@ class App extends Component {
       <Row style={{paddingTop : 24}} gutter={[0, 48]}>
         <Col offset={20} span={4}>
             <Button disabled={!!this.state.accounts} onClick={this.handleConnectWallet} type="primary" className="connect_btn">
-            {this.state.accounts ? this.state.accounts[0].slice(0,4) + "..." + this.accounts[0].toString().slice(-4) : 'Connect Wallet'} 
+            {this.state.displayAccount ? this.state.displayAccount : 'Connect Wallet'} 
           </Button>
         </Col>
         <Col span={12} offset={6}>
