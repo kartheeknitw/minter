@@ -40,9 +40,9 @@ export default function BasicForm({nextStep,setTokenFormData}) {
                     <InputNumber style={{ width: '100%' }} disabled={true} />
                 </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Form.Item >
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        Continue
                     </Button>
                 </Form.Item>
             </Form>

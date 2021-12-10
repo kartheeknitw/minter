@@ -6,15 +6,18 @@ import "./App.css";
 import Stepper from "./components/Stepper";
 import BasicForm from "./components/Forms/BasicForm";
 import Tokenomics from './components/Forms/Tokenomics'
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
+import FinalForm from "./components/Forms/FinalForm";
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      basic: {},
+      basic: {
+        
+      },
       token: {},
-      step: 0
+      step: 0,
     }
   }
 
@@ -41,6 +44,10 @@ class App extends Component {
       );
       console.error(error);
     }
+  };
+
+  handleConnectWallet = async (e) => {
+   
   };
 
   createToken = async () => {
@@ -71,9 +78,14 @@ class App extends Component {
   }
 
   render() {
-    console.log('state', this.state)
+    console.log('this',this.state)
     return (
       <Row style={{paddingTop : 24}} gutter={[0, 48]}>
+        <Col offset={20} span={4}>
+            <Button onClick={this.handleConnectWallet} type="primary">
+              Create Account
+            </Button>
+        </Col>
         <Col span={12} offset={6}>
           <Stepper step={this.state.step} />
         </Col>
@@ -83,6 +95,9 @@ class App extends Component {
           }
           {
             this.state.step === 1 && <Tokenomics nextStep={this.nextStep} setTokenFormData={this.setTokenFormData} />
+          }
+          {
+            this.state.step === 2 && <FinalForm state={this.state} createToken={this.createToken}/>
 
           }
         </Col>
