@@ -64,7 +64,7 @@ class App extends Component {
 
   createToken = async () => {
     // Create custom token.
-    var result = await this.contract.methods.mintToken("Shibu Coin", "SHIB", "1000000000000000000000000000").send({from: this.accounts[0]});
+    var result = await this.state.contract.methods.mintToken("Shibu Coin", "SHIB", "1000000000000000000000000000").send({from: this.state.accounts[0]});
     console.log(result.events.TokenCreated.returnValues._contract);
   }
 
