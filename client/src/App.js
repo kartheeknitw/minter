@@ -10,7 +10,7 @@ import { Button, Col, Row } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null };
+  state = { web3: null, accounts: null, contract: null, displayAccount: null };
   constructor(props) {
     super(props)
     this.state = {
@@ -49,7 +49,8 @@ class App extends Component {
           MyMinterContract.abi,
           deployedNetwork && deployedNetwork.address
         );
-        this.setState({ accounts, contract });
+        let displayAccount = account.toString().slice(0,4) + "..." + account.toString().slice(-4);
+        this.setState({ accounts, contract, displayAccount });
         console.log("Loaded web3 and account: " + account);
       } catch (error) {
         alert(
@@ -64,7 +65,8 @@ class App extends Component {
 
   createToken = async () => {
     // Create custom token.
-    var result = await this.state.contract.methods.mintToken("Shibu Coin", "SHIB", "1000000000000000000000000000").send({from: this.state.accounts[0]});
+    console.log(this.state);    
+    var result = await this.state.contract.methods.mintToken(this.basic.tokenName, this.basic.tokenSymbol, this.token.initialSupply).send({from: this.state.accounts[0]});
     console.log(result.events.TokenCreated.returnValues._contract);
   }
 
@@ -95,7 +97,7 @@ class App extends Component {
       <Row style={{paddingTop : 24}} gutter={[0, 48]}>
         <Col offset={20} span={4}>
             <Button disabled={!!this.state.accounts} onClick={this.handleConnectWallet} type="primary" className="connect_btn">
-            {this.state.accounts ? this.state.accounts[0] : 'Connect Wallet'} 
+            {this.state.accounts ? this.state.displayAccount : 'Connect Wallet'} 
           </Button>
         </Col>
         <Col span={12} offset={6}>
@@ -110,7 +112,6 @@ class App extends Component {
           }
           {
             this.state.step === 2 && <FinalForm state={this.state} createToken={this.createToken}/>
-
           }
         </Col>
       </Row>
