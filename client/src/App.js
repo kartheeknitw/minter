@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import MyMinterContract from "./contracts/MyMinter.json";
-import getWeb3 from "./getWeb3";
+import Web3 from "web3";
 
 import "./App.css";
 import Stepper from "./components/Stepper";
@@ -10,6 +10,7 @@ import { Button, Col, Row } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
 
 class App extends Component {
+  state = { web3: null, accounts: null, contract: null };
   constructor(props) {
     super(props)
     this.state = {
@@ -22,32 +23,43 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      this.web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
-      this.accounts = await this.web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await this.web3.eth.net.getId();
-      const deployedNetwork = MyMinterContract.networks[networkId];
-      this.contract = new this.web3.eth.Contract(
-        MyMinterContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-      console.log("Loaded web3!!");
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+    const web3 = new Web3(window.ethereum);
+    this.setState({ web3, level: 0 });
+    const _accounts = await window.ethereum.request({ method: 'eth_accounts' })
+    if (_accounts.length === 0) {
+      console.log("Metamask is Disconnected");
+    } else {
+      console.log("Metamask is Connected");
+      await this.handleConnectWallet();
     }
   };
 
   handleConnectWallet = async (e) => {
-   
+    if (window.ethereum) {
+      try {
+        const web3 = this.state.web3;
+        const ethereum = window.ethereum;
+        const accounts = await ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        const account = accounts[0];
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = MyMinterContract.networks[networkId];
+        const contract = new web3.eth.Contract(
+          MyMinterContract.abi,
+          deployedNetwork && deployedNetwork.address
+        );
+        this.setState({ accounts, contract });
+        console.log("Loaded web3 and account: " + account);
+      } catch (error) {
+        alert(
+          `Failed to load web3, accounts, or contract. Check console for details.`
+        );
+        console.error(error);
+      }
+    } else {
+      console.log("No web3 connection");
+    }
   };
 
   createToken = async () => {
@@ -82,9 +94,9 @@ class App extends Component {
     return (
       <Row style={{paddingTop : 24}} gutter={[0, 48]}>
         <Col offset={20} span={4}>
-            <Button onClick={this.handleConnectWallet} type="primary">
-              Create Account
-            </Button>
+            <Button disabled={!!this.state.accounts} onClick={this.handleConnectWallet} type="primary" className="connect_btn">
+            {this.state.accounts ? this.state.accounts[0] : 'Connect Wallet'} 
+          </Button>
         </Col>
         <Col span={12} offset={6}>
           <Stepper step={this.state.step} />
