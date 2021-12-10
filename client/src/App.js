@@ -10,7 +10,7 @@ import { Button, Col, Row } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null, displayAccount: null };
+  state = { web3: null, accounts: null, contract: null };
   constructor(props) {
     super(props)
     this.state = {
@@ -25,8 +25,8 @@ class App extends Component {
   componentDidMount = async () => {
     const web3 = new Web3(window.ethereum);
     this.setState({ web3, level: 0 });
-    const _accounts = await window.ethereum.request({ method: 'eth_accounts' })
-    if (_accounts.length === 0) {
+    this.accounts = await window.ethereum.request({ method: 'eth_accounts' })
+    if (this.accounts.length === 0) {
       console.log("Metamask is Disconnected");
     } else {
       console.log("Metamask is Connected");
@@ -49,8 +49,7 @@ class App extends Component {
           MyMinterContract.abi,
           deployedNetwork && deployedNetwork.address
         );
-        let displayAccount = account.toString().slice(0,4) + "..." + account.toString().slice(-4);
-        this.setState({ accounts, contract, displayAccount });
+        this.setState({ accounts, contract });
         console.log("Loaded web3 and account: " + account);
       } catch (error) {
         alert(
@@ -66,7 +65,7 @@ class App extends Component {
   createToken = async () => {
     // Create custom token.
     console.log(this.state);    
-    var result = await this.state.contract.methods.mintToken(this.basic.tokenName, this.basic.tokenSymbol, this.token.initialSupply).send({from: this.state.accounts[0]});
+    var result = await this.state.contract.methods.mintToken(this.state.basic.tokenName, this.state.basic.tokenSymbol, this.state.token.initialSupply).send({from: this.state.accounts[0]});
     console.log(result.events.TokenCreated.returnValues._contract);
   }
 
@@ -97,7 +96,7 @@ class App extends Component {
       <Row style={{paddingTop : 24}} gutter={[0, 48]}>
         <Col offset={20} span={4}>
             <Button disabled={!!this.state.accounts} onClick={this.handleConnectWallet} type="primary" className="connect_btn">
-            {this.state.accounts ? this.state.displayAccount : 'Connect Wallet'} 
+            {this.state.accounts ? this.state.accounts[0].slice(0,4) + "..." + this.accounts[0].toString().slice(-4) : 'Connect Wallet'} 
           </Button>
         </Col>
         <Col span={12} offset={6}>
