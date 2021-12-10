@@ -33,10 +33,6 @@ class App extends Component {
         MyMinterContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
-
-      // Create custom token.
-      // var result = await this.contract.methods.mintToken("Shibu Coin", "SHIB", "1000000000000000000000000000").send({from: this.accounts[0]});
-      // console.log(result.events.TokenCreated.returnValues._contract);
       console.log("Loaded web3!!");
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -46,6 +42,12 @@ class App extends Component {
       console.error(error);
     }
   };
+
+  createToken = async () => {
+    // Create custom token.
+    var result = await this.contract.methods.mintToken("Shibu Coin", "SHIB", "1000000000000000000000000000").send({from: this.accounts[0]});
+    console.log(result.events.TokenCreated.returnValues._contract);
+  }
 
   nextStep = () => {
     this.setState({
@@ -67,6 +69,7 @@ class App extends Component {
       token: data
     })
   }
+
   render() {
     console.log('state', this.state)
     return (
