@@ -64,9 +64,12 @@ class App extends Component {
   };
 
   createToken = async () => {
-    // Create custom token.
     console.log(this.state);    
     var result = await this.state.contract.methods.mintToken(this.state.basic.tokenName, this.state.basic.tokenSymbol, this.state.token.initialSupply).send({from: this.state.accounts[0]});
+    // [Sunil] add below in display after token creation
+    // tokenName, tokenSymbol, initialSupply, image and
+    // _contrack and transactionHash from below
+    console.log(result.events.TokenCreated.transactionHash);
     console.log(result.events.TokenCreated.returnValues._contract);
   }
 
