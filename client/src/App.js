@@ -8,6 +8,7 @@ import BasicForm from "./components/Forms/BasicForm";
 import Tokenomics from './components/Forms/Tokenomics'
 import { Button, Col, Row } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
+import TokenInfo from "./components/Forms/TokenInfo";
 
 class App extends Component {
   state = { web3: null, accounts: null, contract: null, displayState: null };
@@ -69,8 +70,10 @@ class App extends Component {
     // [Sunil] add below in display after token creation
     // tokenName, tokenSymbol, initialSupply, image and
     // _contrack and transactionHash from below
+    this.setState({tx: result.events.TokenCreated.transactionHash, contract: result.events.TokenCreated.returnValues._contract});
     console.log(result.events.TokenCreated.transactionHash);
     console.log(result.events.TokenCreated.returnValues._contract);
+    this.nextStep();
   }
 
   nextStep = () => {
@@ -115,6 +118,9 @@ class App extends Component {
           }
           {
             this.state.step === 2 && <FinalForm state={this.state} createToken={this.createToken}/>
+          }
+          {
+            this.state.step === 3 && <TokenInfo state={this.state}/>
           }
         </Col>
       </Row>
