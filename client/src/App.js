@@ -6,7 +6,7 @@ import "./App.css";
 import Stepper from "./components/Stepper";
 import BasicForm from "./components/Forms/BasicForm";
 import Tokenomics from "./components/Forms/Tokenomics";
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Spin } from "antd";
 import FinalForm from "./components/Forms/FinalForm";
 import TokenInfo from "./components/Forms/TokenInfo";
 
@@ -68,6 +68,7 @@ class App extends Component {
   };
 
   createToken = async () => {
+    this.nextStep();
     const _initialSupply = this.state.token.initialSupply.toString() + "000000000000000000";
     console.log(this.state);
     var result = await this.state.contract.methods
@@ -176,7 +177,10 @@ class App extends Component {
           {this.state.step === 2 && (
             <FinalForm state={this.state} createToken={this.createToken} />
           )}
-          {this.state.step === 3 && <TokenInfo state={this.state} addToken={this.addToken}/>}
+          {this.state.step === 3 && (
+            <Spin />
+          )}
+          {this.state.step === 4 && <TokenInfo state={this.state} addToken={this.addToken}/>}
         </Col>
       </Row>
     );
